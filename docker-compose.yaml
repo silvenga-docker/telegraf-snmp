@@ -1,0 +1,7 @@
+version: "3"
+services:
+  telegraf:
+    build: .
+    volumes: 
+      - ./example:/example:ro
+    command: telegraf --test --config /example/telegraf.conf
