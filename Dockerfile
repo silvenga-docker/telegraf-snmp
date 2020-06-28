@@ -1,11 +1,13 @@
-FROM telegraf:1.7
+FROM telegraf:1.14
 
-# https://github.com/influxdata/influxdata-docker/issues/208#issuecomment-381793475
+RUN set -xe \
+    && echo "deb http://ftp.us.debian.org/debian stretch main non-free" >> /etc/apt/sources.list \
+    && apt-get update \
+    && apt-get install -y snmp-mibs-downloader wget \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN echo "deb http://ftp.us.debian.org/debian stretch main non-free" >> /etc/apt/sources.list \
-    && DEBIAN_FRONTEND=noninteractive apt-get update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends iputils-ping snmp procps snmp-mibs-downloader \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN wget http://dl.ubnt-ut.com/snmp/UBNT-MIB -P /usr/share/snmp/mibs \
-    && wget http://dl.ubnt-ut.com/snmp/UBNT-UniFi-MIB -P /usr/share/snmp/mibs
+RUN set -xe \
+    && wget http://dl.ubnt-ut.com/snmp/UBNT-MIB -P /usr/share/snmp/mibs \
+    && wget http://dl.ubnt-ut.com/snmp/UBNT-UniFi-MIB -P /usr/share/snmp/mibs \
+    && wget "https://download.schneider-electric.com/files?p_enDocType=Firmware&p_File_Name=powernet430.mib&p_Doc_Ref=APC_POWERNETMIB_430" --content-disposition -P /usr/share/snmp/mibs \
+    && echo "mibs +ALL" > /etc/snmp/snmp.conf
