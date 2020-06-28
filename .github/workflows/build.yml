@@ -1,0 +1,18 @@
+name: "Build"
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: silvenga-docker/build-image@latest
+      with:
+        workingPath: .
+        dockerUserName: silvenga-docker
+        dockerPassword: ${{ secrets.GITHUB_TOKEN }}
+        dockerImageName: ${{ github.repository }}/telegraf-snmp
+        dockerTags: latest,${{ github.sha }}
